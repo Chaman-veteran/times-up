@@ -29,12 +29,12 @@ name_team_A = 'test' #input('Nom équipe 1 : ')
 team_A = Team(name_team_A, window)
 team_A.set_words(words)
 
-# name_team_B = 'test' #input('Nom équipe 2 : ')
-# # player_1_team_B = input('Nom joueur 1 : ')
-# # player_2_team_B = input('Nom joueur 2 : ')
-# # team_B = Team(name=name_team_B, playerA=player_1_team_B, playerB=player_2_team_B)
-# team_B = Team(name_team_B, window)
-# team_B.set_words(words)
+name_team_B = 'test' #input('Nom équipe 2 : ')
+# player_1_team_B = input('Nom joueur 1 : ')
+# player_2_team_B = input('Nom joueur 2 : ')
+# team_B = Team(name=name_team_B, playerA=player_1_team_B, playerB=player_2_team_B)
+team_B = Team(name_team_B, window)
+team_B.set_words(words)
 
 for round in range(1,4):
     print(f'Manche {round}')

@@ -32,11 +32,15 @@ class Team:
                                          background='green',
                                          text='Validate',
                                          command=lambda: word_validate(self.words))
-        self.__print_buttons__()
 
     def __print_buttons__(self):
         self.pass_button.pack(side='left')
         self.validate_button.pack(side='right')
+    
+    def __remove_buttons__(self):
+        self.pass_button.pack_forget()
+        self.validate_button.pack_forget()
+
 
     def __init__(self, name : str, window, playerA : str= 'Alice', playerB : str= 'Bob'):
         self.name : str = name
@@ -86,3 +90,4 @@ class Team:
         self.ctr.reset()
 
         self.spy, self.guesser = self.guesser, self.spy
+        self.__remove_buttons__()
