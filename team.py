@@ -1,13 +1,44 @@
-from typing import List
-from random import shuffle
-from time import sleep
-from threading import Thread
+import tkinter as tk
 
 from words import *
 from counter import *
 
+def word_pass(words):
+    words.pass_current_word()
+    try:
+        to_guess = words.pick_word()
+        print(f'Le mot à deviner est : {to_guess}')
+    except EndOfWords:
+        pass
+
+def word_validate(words):
+    words.validate_current_word()
+    to_guess = words.pick_word()
+    print(f'Le mot à deviner est : {to_guess}')
+
 class Team:
-    def __init__(self, name : str, playerA : str= 'Alice', playerB : str= 'Bob'):
+    def __init_gui__(self, window):
+        self.window = window
+
+        self.pass_button = tk.Button(self.window,
+                                     height=50,
+                                     width=50,
+                                     background='red',
+                                     text='Pass',
+                                     command=lambda: word_pass(self.words))
+        self.validate_button = tk.Button(self.window,
+                                         height=50,
+                                         width=50,
+                                         background='green',
+                                         text='Validate',
+                                         command=lambda: word_validate(self.words))
+        self.__print_buttons__()
+
+    def __print_buttons__(self):
+        self.pass_button.pack(side='left')
+        self.validate_button.pack(side='right')
+
+    def __init__(self, name : str, window, playerA : str= 'Alice', playerB : str= 'Bob'):
         self.name : str = name
         self.playerA : str = playerA
         self.playerB : str = playerB
@@ -17,6 +48,9 @@ class Team:
         # Initialization of the team's score and timer
         self.score = 0
         self.ctr : Timer = Timer()
+        # GUI
+        self.__init_gui__(window)
+
     
     def set_words(self, words : Words):
         self.words = words
@@ -29,51 +63,22 @@ class Team:
     
     def play_turn(self):
         """A team playing his allocated time for the current turn."""
+        self.__print_buttons__()
         print(f"C'est à {self.guesser} de deviner, {self.spy}, t'es prêt ?!")
-        self.ctr.start(duration=3)
-
-        def time_bomb(ctr):
-            while True:
-                if ctr.get_remaining_time() > 0:
-                    pass
-                else:
-                    break
+        self.ctr.start(duration=5)
 
         score : int = 0
 
-        def get_inputs(result):
-            print('[P] Passer le mot, [V] Valider le mot ')
-            result.append(input())
-            return result
+        to_guess : str = self.words.pick_word()
+        print(f'Le mot à deviner est : {to_guess}')
+        while self.ctr.get_remaining_time() > 0 and self.words.nb_remaining_words() > 0:
+            self.window.update_idletasks()
+            self.window.update()
+            pass
 
-        timer = Thread(target=time_bomb, args=(self.ctr,))
-        timer.start()
-        while self.words.nb_remaining_words() > 0:
-            to_guess : str = self.words.pick_word()
-            print(f'Le mot à deviner est : {to_guess}')
-            result = list()
-            play = Thread(target=get_inputs, args=(result,))
-            play.start()
-
-            # If we received the input, we can take it into account and ask for another input
-            while timer.is_alive() and play.is_alive():
-                pass
-
-            if self.ctr.get_remaining_time() == 0:
-                print("Time's up!")
-                break
-
-            ret = result[0]
-            if ret.upper() == 'P':
-                self.words.pass_current_word()
-            elif ret.upper() == 'V':
-                self.words.validate_current_word()
-                score += 1
-            else:
-                print('Error.')
-                exit(1)
-
-        if self.ctr.get_remaining_time() > 0:
+        if self.ctr.get_remaining_time() == 0:
+            print('Time Out!')
+        elif self.ctr.get_remaining_time() > 0:
             print(f'EZ, tout a été deviné et il restait {self.ctr.get_remaining_time()}s.')
 
         print(f'{self.name} a scoré {score} !')

@@ -1,6 +1,9 @@
 from typing import List
 from random import shuffle
 
+class EndOfWords(Exception):
+    pass 
+
 class Words:
     def __init__(self, list_of_words: List[str]):
         self.list_of_words = list_of_words
@@ -11,7 +14,10 @@ class Words:
     
     def pick_word(self):
         """Pick the first word (the list of words has been suffled previously)."""
-        return self.list_of_words[0]
+        if len(self.list_of_words) > 0:
+            return self.list_of_words[0]
+        else:
+            raise 
 
     def reset(self):
         self.list_of_words = self.list_of_words+self.guessed
