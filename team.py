@@ -1,6 +1,7 @@
 from typing import List
 from random import shuffle
-from asyncio import create_task
+from time import sleep
+from threading import Thread
 
 from words import *
 from counter import *
@@ -22,34 +23,61 @@ class Team:
     
     def get_score(self):
         return self.score
+
+    def get_name(self):
+        return self.name
     
     def play_turn(self):
         """A team playing his allocated time for the current turn."""
-        print(f"C'est à {self.playerB} de deviner, {self.playerA}, t'es prêt ?!")
-        self.ctr.start()
+        print(f"C'est à {self.guesser} de deviner, {self.spy}, t'es prêt ?!")
+        self.ctr.start(duration=3)
 
-        while self.ctr.get_remaining_time() > 0 and len(self.words) > 0:
+        def time_bomb(ctr):
+            while True:
+                if ctr.get_remaining_time() > 0:
+                    pass
+                else:
+                    break
+
+        score : int = 0
+
+        def get_inputs(result):
+            print('[P] Passer le mot, [V] Valider le mot ')
+            result.append(input())
+            return result
+
+        timer = Thread(target=time_bomb, args=(self.ctr,))
+        timer.start()
+        while self.words.nb_remaining_words() > 0:
             to_guess : str = self.words.pick_word()
             print(f'Le mot à deviner est : {to_guess}')
-            taskInput = create_task(input('[P] Passer le mot, [v] Valider le mot'))
-            if taskInput.done():
-                ret = taskInput.result()
-                if ret.upper() == 'P':
-                    self.words.pass_current_word()
-                elif ret.upper() == 'V':
-                    self.words.validate_current_word()
-                else:
-                    print('Error.')
-                    exit(1)
+            result = list()
+            play = Thread(target=get_inputs, args=(result,))
+            play.start()
 
-        if self.ctr.get_remaining_time() == 0:
-            print("Time's up!")
-        else:
-            print(f'EZ, tout à été deviné et il restait {self.ctr.get_remaining_time()}s.')
+            # If we received the input, we can take it into account and ask for another input
+            while timer.is_alive() and play.is_alive():
+                pass
 
-        score : int = len(self.guessed)
+            if self.ctr.get_remaining_time() == 0:
+                print("Time's up!")
+                break
+
+            ret = result[0]
+            if ret.upper() == 'P':
+                self.words.pass_current_word()
+            elif ret.upper() == 'V':
+                self.words.validate_current_word()
+                score += 1
+            else:
+                print('Error.')
+                exit(1)
+
+        if self.ctr.get_remaining_time() > 0:
+            print(f'EZ, tout a été deviné et il restait {self.ctr.get_remaining_time()}s.')
+
         print(f'{self.name} a scoré {score} !')
         self.score += score
         self.ctr.reset()
 
-        self.guesser = self.playerB if self.guesser == self.playerA else self.playerA
+        self.spy, self.guesser = self.guesser, self.spy
