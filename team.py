@@ -3,20 +3,21 @@ import tkinter as tk
 from words import *
 from counter import *
 
-def word_pass(words):
-    words.pass_current_word()
-    try:
-        to_guess = words.pick_word()
-        print(f'Le mot à deviner est : {to_guess}')
-    except EndOfWords:
-        pass
-
-def word_validate(words):
-    words.validate_current_word()
-    to_guess = words.pick_word()
-    print(f'Le mot à deviner est : {to_guess}')
-
 class Team:
+    def __word_pass__(self):
+        self.words.pass_current_word()
+        to_guess = self.words.pick_word()
+        print(f'Le mot à deviner est : {to_guess}')
+
+    def __word_validate__(self):
+        self.words.validate_current_word()
+        self.score += 1
+        try:
+            to_guess = self.words.pick_word()
+            print(f'Le mot à deviner est : {to_guess}')
+        except EndOfWords:
+            pass
+
     def __init_gui__(self, window):
         self.window = window
 
@@ -25,13 +26,13 @@ class Team:
                                      width=50,
                                      background='red',
                                      text='Pass',
-                                     command=lambda: word_pass(self.words))
+                                     command=lambda: self.__word_pass__())
         self.validate_button = tk.Button(self.window,
                                          height=50,
                                          width=50,
                                          background='green',
                                          text='Validate',
-                                         command=lambda: word_validate(self.words))
+                                         command=lambda: self.__word_validate__())
 
     def __print_buttons__(self):
         self.pass_button.pack(side='left')
@@ -40,7 +41,6 @@ class Team:
     def __remove_buttons__(self):
         self.pass_button.pack_forget()
         self.validate_button.pack_forget()
-
 
     def __init__(self, name : str, window, playerA : str= 'Alice', playerB : str= 'Bob'):
         self.name : str = name
@@ -51,11 +51,11 @@ class Team:
         self.guesser : str = playerB
         # Initialization of the team's score and timer
         self.score = 0
-        self.ctr : Timer = Timer()
+        self.ctr : Timer = Timer(window)
         # GUI
         self.__init_gui__(window)
 
-    
+
     def set_words(self, words : Words):
         self.words = words
     
@@ -67,27 +67,29 @@ class Team:
     
     def play_turn(self):
         """A team playing his allocated time for the current turn."""
-        self.__print_buttons__()
         print(f"C'est à {self.guesser} de deviner, {self.spy}, t'es prêt ?!")
         self.ctr.start(duration=5)
+        self.ctr.draw()
+        self.__print_buttons__()
 
-        score : int = 0
+        previous_score = self.score
 
         to_guess : str = self.words.pick_word()
         print(f'Le mot à deviner est : {to_guess}')
         while self.ctr.get_remaining_time() > 0 and self.words.nb_remaining_words() > 0:
+            self.ctr.update()
             self.window.update_idletasks()
             self.window.update()
-            pass
+
+        self.ctr.clear()
+        self.__remove_buttons__()
 
         if self.ctr.get_remaining_time() == 0:
             print('Time Out!')
         elif self.ctr.get_remaining_time() > 0:
             print(f'EZ, tout a été deviné et il restait {self.ctr.get_remaining_time()}s.')
 
-        print(f'{self.name} a scoré {score} !')
-        self.score += score
+        print(f'{self.name} a scoré {self.score - previous_score} !')
         self.ctr.reset()
 
         self.spy, self.guesser = self.guesser, self.spy
-        self.__remove_buttons__()

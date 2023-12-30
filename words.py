@@ -17,7 +17,7 @@ class Words:
         if len(self.list_of_words) > 0:
             return self.list_of_words[0]
         else:
-            raise 
+            raise EndOfWords
 
     def reset(self):
         self.list_of_words = self.list_of_words+self.guessed
