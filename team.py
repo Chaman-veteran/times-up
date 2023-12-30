@@ -93,7 +93,7 @@ class Team:
     def play_turn(self):
         """A team playing his allocated time for the current turn."""
         self.print_guesser()
-        self.ctr.start(duration=5)
+        self.ctr.start()
         self.draw()
 
         previous_score = self.score

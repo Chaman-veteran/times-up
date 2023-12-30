@@ -17,27 +17,42 @@ words_to_play = sample(words, k=NB_WORDS_TO_GUESS)
 words = Words(words_to_play)
 
 def fill_team_infos(window):
-    l = tk.Label(window, text="Nom d'équipe : ", height=5, width=50)
-    e = tk.Entry(window)
+    l_name = tk.Label(window, text="Nom d'équipe : ", height=5, width=50)
+    l_player1 = tk.Label(window, text="Nom joueur 1 : ", height=5, width=50)
+    l_player2 = tk.Label(window, text="Nom joueur 2 : ", height=5, width=50)
+    e_name = tk.Entry(window)
+    e_player1 = tk.Entry(window)
+    e_player2 = tk.Entry(window)
+
     mutex : Mutex = Mutex()
     mutex.take()
     b = tk.Button(window ,text="Submit", command=lambda: mutex.put())
-    l.pack()
-    e.pack()
+    l_name.pack()
+    e_name.pack()
+    l_player1.pack()
+    e_player1.pack()
+    l_player2.pack()
+    e_player2.pack()
     b.pack()
+
     while mutex.get_value() == 0:
         window.update_idletasks()
         window.update()
-    l.pack_forget()
-    e.pack_forget()
+
+    l_name.pack_forget()
+    l_player1.pack_forget()
+    l_player2.pack_forget()
+    e_name.pack_forget()
+    e_player1.pack_forget()
+    e_player2.pack_forget()
     b.pack_forget()
 
-    return Team(name=e.get(), window=window)
+    return Team(name=e_name.get(), window=window, playerA=e_player1.get(), playerB=e_player2.get())
 
-team_A = fill_team_infos(window) # TODO: gérer les noms des joueurs
+team_A = fill_team_infos(window)
 team_A.set_words(words)
 
-team_B = fill_team_infos(window) # TODO: gérer les noms des joueurs
+team_B = fill_team_infos(window)
 team_B.set_words(words)
 
 def change_team(window):
