@@ -11,7 +11,7 @@ window = tk.Tk()
 
 # Construct the words to play with
 with open('dictionnaire/test') as f:
-    words = list(map(lambda x: x.strip('\n'), f.readlines()))
+    words = list(set(map(lambda x: x.strip('\n'), f.readlines())))
 
 words_to_play = sample(words, k=NB_WORDS_TO_GUESS)
 words = Words(words_to_play)
