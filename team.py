@@ -78,7 +78,7 @@ class Team:
     def print_guesser(self):
         label = tk.Label(self.window,
                          font=('calibri', 20, 'bold'),
-                         text=f"C'est à {self.guesser} de deviner, {self.spy}, t'es prêt ?!")
+                         text=f"{self.name}, c'est à {self.guesser} de deviner, {self.spy}, t'es prêt ?!")
         b = tk.Button(self.window ,text="Prêt ?", command=lambda: mutex.put(), height=7, width=20)
         mutex : Mutex = Mutex()
         mutex.take()
@@ -107,7 +107,9 @@ class Team:
         self.clear()
 
         if self.ctr.get_remaining_time() == 0:
-            to = tk.Label(text='Time Out!', anchor=tk.CENTER)
+            to = tk.Label(text='Time Out!',
+                          anchor=tk.CENTER,
+                          font=('calibri', 20, 'bold'))
             to.pack()
             self.window.update_idletasks()
             self.window.update()
@@ -115,7 +117,8 @@ class Team:
             to.pack_forget()
         elif self.ctr.get_remaining_time() > 0:
             ez = tk.Label(text=f'EZ, tout a été deviné et il restait {self.ctr.get_remaining_time()}s.',
-                          anchor=tk.CENTER)
+                          anchor=tk.CENTER,
+                         font=('calibri', 20, 'bold'))
             ez.pack()
             self.window.update_idletasks()
             self.window.update()
@@ -123,7 +126,8 @@ class Team:
             ez.pack_forget()
 
         scored = tk.Label(text=f'{self.name} a scoré {self.score - previous_score} !',
-                        anchor=tk.CENTER)
+                          anchor=tk.CENTER,
+                         font=('calibri', 20, 'bold'))
         scored.pack()
         self.window.update_idletasks()
         self.window.update()
