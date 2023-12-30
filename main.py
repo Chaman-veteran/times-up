@@ -56,11 +56,13 @@ def change_team(window):
 def print_scores(window, team_1, team_2):
     score_team_1 = tk.Label(window,
                             text=f"Score de l'équipe {team_1.get_name()} : {team_1.get_score()}",
-                            anchor=tk.CENTER)
+                            anchor=tk.CENTER,
+                            font=('calibri', 20, 'bold'),)
     score_team_2 = tk.Label(window,
                             text=f"Score de l'équipe {team_2.get_name()} : {team_2.get_score()}",
-                            anchor=tk.CENTER)
-    b = tk.Button(window ,text="Prêt ?", command=lambda: mutex.put())
+                            anchor=tk.CENTER,
+                            font=('calibri', 20, 'bold'))
+    b = tk.Button(window ,text="Manche suivante", command=lambda: mutex.put())
     mutex : Mutex = Mutex()
     mutex.take()
     score_team_1.pack()
@@ -89,11 +91,13 @@ def print_round(window, round):
 
 for round in range(1,4):
     print_round(window, round)
+    i = 0
+    teams = [team_A, team_B]
+    teams[i].play_turn()
     while words.nb_remaining_words() > 0:
-        # A turn takes place
-        team_A.play_turn()
         change_team(window)
-        team_B.play_turn()
+        i += 1
+        teams[i%2].play_turn()
 
     words.reset()
     print_scores(window, team_A, team_B)

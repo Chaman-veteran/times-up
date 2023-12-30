@@ -5,9 +5,9 @@ class Timer:
     def __init_gui__(self, window):
         self.window = window
         label = tk.Label(window,
-                       font=('calibri', 40, 'bold'),
-                       background='purple',
-                       foreground='white')
+                        font=('calibri', 40, 'bold'),
+                        background='purple',
+                        foreground='white')
         self.label = label
 
     def __init__(self, window):
