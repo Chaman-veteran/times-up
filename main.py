@@ -5,12 +5,12 @@ from team import *
 from words import *
 from mutex import *
 
-NB_WORDS_TO_GUESS = 6
+NB_WORDS_TO_GUESS = 32
 
 window = tk.Tk()
 
 # Construct the words to play with
-with open('dictionnaire/test') as f:
+with open('dictionary/wordlist_fr') as f:
     words = list(set(map(lambda x: x.strip('\n'), f.readlines())))
 
 words_to_play = sample(words, k=NB_WORDS_TO_GUESS)
@@ -68,7 +68,7 @@ def change_team(window):
     label.pack_forget()
     b.pack_forget()
 
-def print_scores(window, team_1, team_2):
+def print_scores(window, team_1, team_2, round):
     score_team_1 = tk.Label(window,
                             text=f"Score de l'équipe {team_1.get_name()} : {team_1.get_score()}",
                             anchor=tk.CENTER,
@@ -77,7 +77,8 @@ def print_scores(window, team_1, team_2):
                             text=f"Score de l'équipe {team_2.get_name()} : {team_2.get_score()}",
                             anchor=tk.CENTER,
                             font=('calibri', 20, 'bold'))
-    b = tk.Button(window ,text="Manche suivante", command=lambda: mutex.put())
+    
+    b = tk.Button(window ,text='Manche suivante' if round < 3 else 'Fin', command=lambda: mutex.put())
     mutex : Mutex = Mutex()
     mutex.take()
     score_team_1.pack()
@@ -91,8 +92,15 @@ def print_scores(window, team_1, team_2):
     b.pack_forget()
 
 def print_round(window, round):
-    label = tk.Label(window, text=f'Manche {round}', anchor=tk.CENTER, height=5, width=50)
-    b = tk.Button(window ,text="Prêt ?", command=lambda: mutex.put(), height=7, width=20)
+    if round == 1:
+        todo = "il faut deviner à l'aide de phrases."
+    elif round == 2:
+        todo = "il faut deviner à l'aide d'un mot."
+    else:
+        todo = "il faut deviner à l'aide de mimes."
+
+    label = tk.Label(window, text=f'Manche {round} : {todo}', anchor=tk.CENTER, height=5, width=50)
+    b = tk.Button(window ,text='Prêt ?', command=lambda: mutex.put(), height=7, width=20)
     mutex : Mutex = Mutex()
     mutex.take()
     label.pack()
@@ -104,15 +112,17 @@ def print_round(window, round):
     b.pack_forget()
 
 
+i = 0
+teams = [team_A, team_B]
+
 for round in range(1,4):
     print_round(window, round)
-    i = 0
-    teams = [team_A, team_B]
-    teams[i].play_turn()
+    teams[i%2].play_turn()
+    i += 1
     while words.nb_remaining_words() > 0:
         change_team(window)
-        i += 1
         teams[i%2].play_turn()
+        i += 1
 
     words.reset()
-    print_scores(window, team_A, team_B)
+    print_scores(window, team_A, team_B, round)

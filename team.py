@@ -116,7 +116,7 @@ class Team:
             sleep(3)
             to.pack_forget()
         elif self.ctr.get_remaining_time() > 0:
-            ez = tk.Label(text=f'EZ, tout a été deviné et il restait {self.ctr.get_remaining_time()}s.',
+            ez = tk.Label(text=f'Tout a été deviné et il restait {self.ctr.get_remaining_time():.1f}s.',
                           anchor=tk.CENTER,
                          font=('calibri', 20, 'bold'))
             ez.pack()

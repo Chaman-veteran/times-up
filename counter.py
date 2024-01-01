@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 import tkinter as tk
 
+DEFAULT_DURATION = 45
+
 class Timer:
     def __init_gui__(self, window):
         self.window = window
@@ -19,12 +21,12 @@ class Timer:
         self.label.pack()
     
     def update(self):
-        self.label.config(text=f'{self.get_remaining_time():.2f}s')
+        self.label.config(text=f'{self.get_remaining_time():.1f}s')
     
     def clear(self):
         self.label.pack_forget()
 
-    def start(self, duration : int = 30):
+    def start(self, duration : int = DEFAULT_DURATION):
         self.start_time = datetime.now()
         self.end_time = self.start_time + timedelta(seconds=duration)
     
@@ -33,6 +35,6 @@ class Timer:
                                     else timedelta(0)
         return max(0, remaining_time.total_seconds())
     
-    def reset(self, duration : int = 30):
+    def reset(self, duration : int = DEFAULT_DURATION):
         self.start_time=datetime.now()
         self.end_time = self.start_time + timedelta(seconds=duration)
