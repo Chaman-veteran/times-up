@@ -1,12 +1,22 @@
-from typing import List
+"""
+    words.py
+    Module to handle the words-picking for each turn.
+"""
+from random import sample
+
 from random import shuffle
+
+NB_WORDS_TO_GUESS = 32
 
 class EndOfWords(Exception):
     pass 
 
 class Words:
-    def __init__(self, list_of_words: List[str]):
-        self.list_of_words = list_of_words
+    def __init__(self, dictionary_path: str):
+        with open(dictionary_path) as f:
+            words = list({line.strip('\n') for line in f.readlines()})
+
+        self.list_of_words = sample(words, k=NB_WORDS_TO_GUESS)
         self.guessed = list()
 
     def nb_remaining_words(self):
@@ -20,7 +30,7 @@ class Words:
             raise EndOfWords
 
     def reset(self):
-        self.list_of_words = self.list_of_words+self.guessed
+        self.list_of_words = self.list_of_words + self.guessed
         self.guessed = list()
         shuffle(self.list_of_words)
 

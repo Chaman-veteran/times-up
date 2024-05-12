@@ -1,3 +1,9 @@
+"""
+    team.py
+    Module to manage teams.
+    Display of the game during play time is also handled here.
+"""
+
 import tkinter as tk
 from time import sleep
 
@@ -79,9 +85,9 @@ class Team:
         label = tk.Label(self.window,
                          font=('calibri', 20, 'bold'),
                          text=f"{self.name}, c'est à {self.guesser} de deviner, {self.spy}, t'es prêt ?!")
-        b = tk.Button(self.window ,text="Prêt ?", command=lambda: mutex.put(), height=7, width=20)
         mutex : Mutex = Mutex()
         mutex.take()
+        b = tk.Button(self.window ,text="Prêt ?", command=mutex.put, height=7, width=20)
         label.pack()
         b.pack()
         while mutex.get_value() == 0:
@@ -118,7 +124,7 @@ class Team:
         elif self.ctr.get_remaining_time() > 0:
             ez = tk.Label(text=f'Tout a été deviné et il restait {self.ctr.get_remaining_time():.1f}s.',
                           anchor=tk.CENTER,
-                         font=('calibri', 20, 'bold'))
+                          font=('calibri', 20, 'bold'))
             ez.pack()
             self.window.update_idletasks()
             self.window.update()
@@ -127,7 +133,7 @@ class Team:
 
         scored = tk.Label(text=f'{self.name} a scoré {self.score - previous_score} !',
                           anchor=tk.CENTER,
-                         font=('calibri', 20, 'bold'))
+                          font=('calibri', 20, 'bold'))
         scored.pack()
         self.window.update_idletasks()
         self.window.update()

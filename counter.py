@@ -1,3 +1,8 @@
+"""
+    counter.py
+    Module to display and manage the time counter.
+"""
+
 from datetime import datetime, timedelta
 import tkinter as tk
 
@@ -13,8 +18,8 @@ class Timer:
         self.label = label
 
     def __init__(self, window):
-        self.start_time : datetime = None
-        self.end_time : datetime = None
+        self.start_time : datetime | None = None
+        self.end_time : datetime | None = None
         self.__init_gui__(window)
     
     def draw(self):

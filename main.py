@@ -1,20 +1,22 @@
-from random import sample
+"""
+    main.py
+    Dictates the structure of the game.
+"""
+
 import tkinter as tk
 
 from team import *
 from words import *
 from mutex import *
 
-NB_WORDS_TO_GUESS = 32
-
 window = tk.Tk()
 
-# Construct the words to play with
-with open('dictionary/wordlist_fr') as f:
-    words = list(set(map(lambda x: x.strip('\n'), f.readlines())))
+words = Words('dictionary/wordlist_fr')
 
-words_to_play = sample(words, k=NB_WORDS_TO_GUESS)
-words = Words(words_to_play)
+def refreshUntilMutex(mutex):
+    while mutex.get_value() == 0:
+        window.update_idletasks()
+        window.update()
 
 def fill_team_infos(window):
     l_name = tk.Label(window, text="Nom d'équipe : ", height=5, width=50)
@@ -26,7 +28,7 @@ def fill_team_infos(window):
 
     mutex : Mutex = Mutex()
     mutex.take()
-    b = tk.Button(window ,text="Submit", command=lambda: mutex.put())
+    b = tk.Button(window, text="Submit", command=mutex.put)
     l_name.pack()
     e_name.pack()
     l_player1.pack()
@@ -35,9 +37,7 @@ def fill_team_infos(window):
     e_player2.pack()
     b.pack()
 
-    while mutex.get_value() == 0:
-        window.update_idletasks()
-        window.update()
+    refreshUntilMutex(mutex)
 
     l_name.pack_forget()
     l_player1.pack_forget()
@@ -57,14 +57,12 @@ team_B.set_words(words)
 
 def change_team(window):
     label = tk.Label(window, text="À l'autre équipe !", anchor=tk.CENTER, height=5, width=50)
-    b = tk.Button(window ,text="Prêt ?", command=lambda: mutex.put())
     mutex : Mutex = Mutex()
     mutex.take()
+    b = tk.Button(window, text="Prêt ?", command=mutex.put)
     label.pack()
     b.pack()
-    while mutex.get_value() == 0:
-        window.update_idletasks()
-        window.update()
+    refreshUntilMutex(mutex)
     label.pack_forget()
     b.pack_forget()
 
@@ -78,15 +76,13 @@ def print_scores(window, team_1, team_2, round):
                             anchor=tk.CENTER,
                             font=('calibri', 20, 'bold'))
     
-    b = tk.Button(window ,text='Manche suivante' if round < 3 else 'Fin', command=lambda: mutex.put())
     mutex : Mutex = Mutex()
     mutex.take()
+    b = tk.Button(window, text='Manche suivante' if round < 3 else 'Fin', command=mutex.put)
     score_team_1.pack()
     score_team_2.pack()
     b.pack()
-    while mutex.get_value() == 0:
-        window.update_idletasks()
-        window.update()
+    refreshUntilMutex(mutex)
     score_team_1.pack_forget()
     score_team_2.pack_forget()
     b.pack_forget()
@@ -100,14 +96,12 @@ def print_round(window, round):
         todo = "il faut deviner à l'aide de mimes."
 
     label = tk.Label(window, text=f'Manche {round} : {todo}', anchor=tk.CENTER, height=5, width=50)
-    b = tk.Button(window ,text='Prêt ?', command=lambda: mutex.put(), height=7, width=20)
     mutex : Mutex = Mutex()
     mutex.take()
+    b = tk.Button(window ,text='Prêt ?', command=mutex.put, height=7, width=20)
     label.pack()
     b.pack()
-    while mutex.get_value() == 0:
-        window.update_idletasks()
-        window.update()
+    refreshUntilMutex(mutex)
     label.pack_forget()
     b.pack_forget()
 
