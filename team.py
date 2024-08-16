@@ -84,7 +84,7 @@ class Team:
     def print_guesser(self):
         label = tk.Label(self.window,
                          font=('calibri', 20, 'bold'),
-                         text=f"{self.name}, c'est à {self.guesser} de deviner, {self.spy}, t'es prêt ?!")
+                         text=f"{self.name}, c'est à {self.spy} de faire deviner à {self.guesser}, {self.spy} t'es prêt ?!")
         mutex : Mutex = Mutex()
         mutex.take()
         b = tk.Button(self.window ,text="Prêt ?", command=mutex.put, height=7, width=20)
