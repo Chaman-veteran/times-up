@@ -116,6 +116,7 @@ class Team:
             to = tk.Label(text='Time Out!',
                           anchor=tk.CENTER,
                           font=('calibri', 20, 'bold'))
+            self.__word_pass__()                          
             to.pack()
             self.window.update_idletasks()
             self.window.update()
