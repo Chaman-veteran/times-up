@@ -6,6 +6,7 @@
 import tkinter as tk
 import tkinter.font as tkFont
 
+import config as cfg
 from team import Team
 from words import Words
 from lib.mutex import Mutex
@@ -17,7 +18,6 @@ words = Words('dictionary/wordlist_fr')
 
 def refreshUntilMutex(mutex):
     while mutex.get_value() == 0:
-        window.update_idletasks()
         window.update()
 
 def fill_team_infos(window):
@@ -97,18 +97,16 @@ def print_round(window, round):
     label.pack_forget()
     b.pack_forget()
 
-
-i = 0
 teams = [team_A, team_B]
 
 for round in range(1,4):
     print_round(window, round)
-    teams[i%2].play_turn()
-    i += 1
+    teams[cfg.turn_picker].play_turn()
+    cfg.turn_picker ^= 1
     while words.nb_remaining_words() > 0:
         change_team(window)
-        teams[i%2].play_turn()
-        i += 1
+        teams[cfg.turn_picker].play_turn()
+        cfg.turn_picker ^= 1
 
     words.reset()
     print_scores(window, team_A, team_B, round)

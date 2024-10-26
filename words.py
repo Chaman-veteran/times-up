@@ -2,9 +2,7 @@
     words.py
     Module to handle the words-picking for each turn.
 """
-from random import sample
-
-from random import shuffle
+from random import sample, shuffle
 
 NB_WORDS_TO_GUESS = 32
 
@@ -40,4 +38,3 @@ class Words:
     
     def pass_current_word(self):
         self.list_of_words = self.list_of_words[1:] + [self.list_of_words[0]]
-        

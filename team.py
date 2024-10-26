@@ -8,6 +8,7 @@ import tkinter as tk
 from time import sleep
 
 from words import Words, EndOfWords
+import config as cfg
 
 from lib.counter import Timer
 from lib.mutex import Mutex
@@ -18,8 +19,8 @@ class Team:
         self.pick_word_to_guess()
 
     def __word_validate__(self):
-        self.score += 1
-        self.validated_counter.config(text=f'Mots validés ce tour : {self.score}')
+        self.score_round += 1
+        self.validated_counter.config(text=f'Mots validés ce tour : {self.score_round}')
         self.words.validate_current_word()
         try:
             self.pick_word_to_guess()
@@ -45,7 +46,7 @@ class Team:
                                          command=lambda: self.__word_validate__())
         self.to_guess = tk.Label(self.window, font=('calibri', 30, 'bold'))
         self.validated_counter = tk.Label(self.window,
-                                          text=f'Mot validé ce tour : {self.score}',
+                                          text=f'Mot validé ce tour : {self.score_round}',
                                           font=('calibri', 30, 'bold'))
 
     def __init__(self, name : str, window, playerA : str= 'Alice', playerB : str= 'Bob'):
@@ -57,6 +58,7 @@ class Team:
         self.guesser : str = playerB
         # Initialization of the team's score and timer
         self.score = 0
+        self.score_round = 0
         self.ctr : Timer = Timer(window)
         # GUI
         self.__init_gui__(window)
@@ -107,7 +109,7 @@ class Team:
         self.ctr.start()
         self.draw()
 
-        previous_score = self.score
+        self.score_round = 0
 
         self.pick_word_to_guess()
         while self.ctr.get_remaining_time() > 0 and self.words.nb_remaining_words() > 0:
@@ -117,14 +119,21 @@ class Team:
         self.clear()
 
         label_round_end = ''
+        saved_ctr = 0
         if self.ctr.get_remaining_time() == 0:
             label_round_end = 'Time Out!'
             self.__word_pass__()
-        elif self.ctr.get_remaining_time() > 0:
-            label_round_end = f'Tout a été deviné et il restait {self.ctr.get_remaining_time():.1f}s.'
+        elif (time_left := self.ctr.get_remaining_time()) > 0:
+            label_round_end = f'Tout a été deviné et il restait {time_left:.1f}s.'
+            if time_left > (threshold := 10):
+                label_round_end += f'\nIl restait plus de {threshold}s, {self.name} va continuer à jouer !'
+                self.spy, self.guesser = self.guesser, self.spy
+                cfg.turn_picker ^= 1
+                saved_ctr = time_left
 
-        round_end = tk.Label(text=label_round_end)
-        scored = tk.Label(text=f'{self.name} a scoré {self.score - previous_score} !')
+        round_end = tk.Label(text=label_round_end, width=50)
+        self.score += self.score_round
+        scored = tk.Label(text=f'{self.name} a scoré {self.score_round} !')
 
         round_end.pack(anchor=tk.CENTER)
         scored.pack(anchor=tk.CENTER)
@@ -135,5 +144,5 @@ class Team:
         round_end.pack_forget()
         scored.pack_forget()
 
-        self.ctr.reset()
+        self.ctr.reset(saved_ctr)
         self.spy, self.guesser = self.guesser, self.spy

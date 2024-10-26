@@ -21,6 +21,7 @@ class Timer:
         self.start_time : datetime | None = None
         self.end_time : datetime | None = None
         self.__init_gui__(window)
+        self.duration = DEFAULT_DURATION
     
     def draw(self):
         self.label.pack()
@@ -31,15 +32,17 @@ class Timer:
     def clear(self):
         self.label.pack_forget()
 
-    def start(self, duration : int = DEFAULT_DURATION):
+    def start(self):
         self.start_time = datetime.now()
-        self.end_time = self.start_time + timedelta(seconds=duration)
+        self.end_time = self.start_time + timedelta(seconds=self.duration)
     
     def get_remaining_time(self) -> int:
+        """
+            Gives the time left for the current counter in seconds.
+        """
         remaining_time : timedelta = self.end_time - datetime.now() if self.end_time != None \
                                     else timedelta(0)
         return max(0, remaining_time.total_seconds())
     
     def reset(self, duration : int = DEFAULT_DURATION):
-        self.start_time=datetime.now()
-        self.end_time = self.start_time + timedelta(seconds=duration)
+        self.duration = duration
