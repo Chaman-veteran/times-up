@@ -9,7 +9,7 @@ from time import sleep
 
 from words import *
 from counter import *
-from mutex import *
+from lib.mutex import *
 
 class Team:
     def __word_pass__(self):

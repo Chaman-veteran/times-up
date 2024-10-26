@@ -7,7 +7,7 @@ import tkinter as tk
 
 from team import *
 from words import *
-from mutex import *
+from lib.mutex import *
 
 window = tk.Tk()
 
@@ -29,22 +29,16 @@ def fill_team_infos(window):
     mutex : Mutex = Mutex()
     mutex.take()
     b = tk.Button(window, text="Submit", command=mutex.put)
-    l_name.pack()
-    e_name.pack()
-    l_player1.pack()
-    e_player1.pack()
-    l_player2.pack()
-    e_player2.pack()
+    for (label, entry) in ((l_name, e_name), (l_player1, e_player1), (l_player2, e_player2)):
+        label.pack()
+        entry.pack()
     b.pack()
 
     refreshUntilMutex(mutex)
 
-    l_name.pack_forget()
-    l_player1.pack_forget()
-    l_player2.pack_forget()
-    e_name.pack_forget()
-    e_player1.pack_forget()
-    e_player2.pack_forget()
+    for (label, entry) in ((l_name, e_name), (l_player1, e_player1), (l_player2, e_player2)):
+        label.pack_forget()
+        entry.pack_forget()
     b.pack_forget()
 
     return Team(name=e_name.get(), window=window, playerA=e_player1.get(), playerB=e_player2.get())
