@@ -1,3 +1,8 @@
+"""
+    mutex.py
+    Module implementing naive, non-atomic mutex.
+"""
+
 class Mutex:
     def __init__(self, value = 1):
         self.value = value

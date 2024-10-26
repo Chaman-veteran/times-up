@@ -4,12 +4,14 @@
 """
 
 import tkinter as tk
+import tkinter.font as tkFont
 
 from team import Team
 from words import Words
 from lib.mutex import Mutex
 
 window = tk.Tk()
+tkFont.nametofont("TkDefaultFont").configure(family='calibri', size=16, weight='bold')
 
 words = Words('dictionary/wordlist_fr')
 
@@ -28,7 +30,7 @@ def fill_team_infos(window):
 
     mutex : Mutex = Mutex()
     mutex.take()
-    b = tk.Button(window, text="Submit", command=mutex.put)
+    b = tk.Button(window, text="Valider", command=mutex.put)
     for (label, entry) in ((l_name, e_name), (l_player1, e_player1), (l_player2, e_player2)):
         label.pack()
         entry.pack()
@@ -50,11 +52,11 @@ team_B = fill_team_infos(window)
 team_B.set_words(words)
 
 def change_team(window):
-    label = tk.Label(window, text="À l'autre équipe !", anchor=tk.CENTER, height=5, width=50)
+    label = tk.Label(window, text="À l'autre équipe !", height=5, width=50)
     mutex : Mutex = Mutex()
     mutex.take()
     b = tk.Button(window, text="Prêt ?", command=mutex.put)
-    label.pack()
+    label.pack(anchor=tk.CENTER)
     b.pack()
     refreshUntilMutex(mutex)
     label.pack_forget()
@@ -62,11 +64,9 @@ def change_team(window):
 
 def print_scores(window, team_1, team_2, round):
     score_team_1 = tk.Label(window,
-                            text=f"Score de l'équipe {team_1.get_name()} : {team_1.get_score()}",
-                            font=('calibri', 20, 'bold'),)
+                            text=f"Score de l'équipe {team_1.get_name()} : {team_1.get_score()}")
     score_team_2 = tk.Label(window,
-                            text=f"Score de l'équipe {team_2.get_name()} : {team_2.get_score()}",
-                            font=('calibri', 20, 'bold'))
+                            text=f"Score de l'équipe {team_2.get_name()} : {team_2.get_score()}")
     
     mutex : Mutex = Mutex()
     mutex.take()
@@ -87,11 +87,11 @@ def print_round(window, round):
     else:
         todo = "il faut deviner à l'aide de mimes."
 
-    label = tk.Label(window, text=f'Manche {round} : {todo}', anchor=tk.CENTER, height=5, width=50)
+    label = tk.Label(window, text=f'Manche {round} : {todo}', height=5, width=50)
     mutex : Mutex = Mutex()
     mutex.take()
-    b = tk.Button(window ,text='Prêt ?', command=mutex.put, height=7, width=20)
-    label.pack()
+    b = tk.Button(window, text='Prêt ?', command=mutex.put, height=7, width=20)
+    label.pack(anchor=tk.CENTER)
     b.pack()
     refreshUntilMutex(mutex)
     label.pack_forget()

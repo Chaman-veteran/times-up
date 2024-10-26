@@ -35,16 +35,14 @@ class Team:
                                      background='red',
                                      activebackground='red',
                                      text='Passer',
-                                     command=lambda: self.__word_pass__(),
-                                     font=('calibri', 10, 'bold'))
+                                     command=lambda: self.__word_pass__())
         self.validate_button = tk.Button(self.window,
                                          height=50,
                                          width=50,
                                          background='green',
                                          activebackground='green',
                                          text='Valider',
-                                         command=lambda: self.__word_validate__(),
-                                         font=('calibri', 10, 'bold'))
+                                         command=lambda: self.__word_validate__())
         self.to_guess = tk.Label(self.window, font=('calibri', 30, 'bold'))
         self.validated_counter = tk.Label(self.window,
                                           text=f'Mot validé ce tour : {self.score}',
@@ -92,7 +90,6 @@ class Team:
     
     def print_guesser(self):
         label = tk.Label(self.window,
-                         font=('calibri', 20, 'bold'),
                          text=f"{self.name}, c'est à {self.spy} de faire deviner à {self.guesser}, {self.spy} t'es prêt ?!")
         mutex : Mutex = Mutex()
         mutex.take()
@@ -126,16 +123,14 @@ class Team:
         elif self.ctr.get_remaining_time() > 0:
             label_round_end = f'Tout a été deviné et il restait {self.ctr.get_remaining_time():.1f}s.'
 
-        round_end = tk.Label(text=label_round_end,
-                             font=('calibri', 20, 'bold'))
-        scored = tk.Label(text=f'{self.name} a scoré {self.score - previous_score} !',
-                          font=('calibri', 20, 'bold'))
+        round_end = tk.Label(text=label_round_end)
+        scored = tk.Label(text=f'{self.name} a scoré {self.score - previous_score} !')
 
         round_end.pack(anchor=tk.CENTER)
         scored.pack(anchor=tk.CENTER)
 
         self.window.update_idletasks()
-        sleep(3)
+        sleep(4)
 
         round_end.pack_forget()
         scored.pack_forget()
