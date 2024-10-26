@@ -7,9 +7,10 @@
 import tkinter as tk
 from time import sleep
 
-from words import *
-from counter import *
-from lib.mutex import *
+from words import Words, EndOfWords
+
+from lib.counter import Timer
+from lib.mutex import Mutex
 
 class Team:
     def __word_pass__(self):
@@ -17,8 +18,9 @@ class Team:
         self.pick_word_to_guess()
 
     def __word_validate__(self):
-        self.words.validate_current_word()
         self.score += 1
+        self.validated_counter.config(text=f'Mots validés ce tour : {self.score}')
+        self.words.validate_current_word()
         try:
             self.pick_word_to_guess()
         except EndOfWords:
@@ -31,17 +33,22 @@ class Team:
                                      height=50,
                                      width=50,
                                      background='red',
-                                     text='Pass',
+                                     activebackground='red',
+                                     text='Passer',
                                      command=lambda: self.__word_pass__(),
                                      font=('calibri', 10, 'bold'))
         self.validate_button = tk.Button(self.window,
                                          height=50,
                                          width=50,
                                          background='green',
-                                         text='Validate',
+                                         activebackground='green',
+                                         text='Valider',
                                          command=lambda: self.__word_validate__(),
                                          font=('calibri', 10, 'bold'))
         self.to_guess = tk.Label(self.window, font=('calibri', 30, 'bold'))
+        self.validated_counter = tk.Label(self.window,
+                                          text=f'Mot validé ce tour : {self.score}',
+                                          font=('calibri', 30, 'bold'))
 
     def __init__(self, name : str, window, playerA : str= 'Alice', playerB : str= 'Bob'):
         self.name : str = name
@@ -58,12 +65,14 @@ class Team:
 
     def draw(self):
         self.ctr.draw()
+        self.validated_counter.pack()
         self.to_guess.pack()
         self.pass_button.pack(side='left')
         self.validate_button.pack(side='right')
     
     def clear(self):
         self.ctr.clear()
+        self.validated_counter.pack_forget()
         self.to_guess.pack_forget()
         self.pass_button.pack_forget()
         self.validate_button.pack_forget()
@@ -78,8 +87,8 @@ class Team:
         return self.name
 
     def pick_word_to_guess(self):
-        to_guess : str = self.words.pick_word()
-        self.to_guess.config(text=f'Le mot à deviner est : {to_guess}')
+        word_to_guess : str = self.words.pick_word()
+        self.to_guess.config(text=f'Le mot à deviner est : {word_to_guess}')
     
     def print_guesser(self):
         label = tk.Label(self.window,
@@ -91,7 +100,6 @@ class Team:
         label.pack()
         b.pack()
         while mutex.get_value() == 0:
-            self.window.update_idletasks()
             self.window.update()
         label.pack_forget()
         b.pack_forget()
@@ -107,38 +115,29 @@ class Team:
         self.pick_word_to_guess()
         while self.ctr.get_remaining_time() > 0 and self.words.nb_remaining_words() > 0:
             self.ctr.update()
-            self.window.update_idletasks()
             self.window.update()
 
         self.clear()
 
+        label_round_end = ''
         if self.ctr.get_remaining_time() == 0:
-            to = tk.Label(text='Time Out!',
-                          anchor=tk.CENTER,
-                          font=('calibri', 20, 'bold'))
-            self.__word_pass__()                          
-            to.pack()
-            self.window.update_idletasks()
-            self.window.update()
-            sleep(3)
-            to.pack_forget()
+            label_round_end = 'Time Out!'
+            self.__word_pass__()
         elif self.ctr.get_remaining_time() > 0:
-            ez = tk.Label(text=f'Tout a été deviné et il restait {self.ctr.get_remaining_time():.1f}s.',
-                          anchor=tk.CENTER,
-                          font=('calibri', 20, 'bold'))
-            ez.pack()
-            self.window.update_idletasks()
-            self.window.update()
-            sleep(3)
-            ez.pack_forget()
+            label_round_end = f'Tout a été deviné et il restait {self.ctr.get_remaining_time():.1f}s.'
 
+        round_end = tk.Label(text=label_round_end,
+                             font=('calibri', 20, 'bold'))
         scored = tk.Label(text=f'{self.name} a scoré {self.score - previous_score} !',
-                          anchor=tk.CENTER,
                           font=('calibri', 20, 'bold'))
-        scored.pack()
+
+        round_end.pack(anchor=tk.CENTER)
+        scored.pack(anchor=tk.CENTER)
+
         self.window.update_idletasks()
-        self.window.update()
         sleep(3)
+
+        round_end.pack_forget()
         scored.pack_forget()
 
         self.ctr.reset()

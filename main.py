@@ -5,9 +5,9 @@
 
 import tkinter as tk
 
-from team import *
-from words import *
-from lib.mutex import *
+from team import Team
+from words import Words
+from lib.mutex import Mutex
 
 window = tk.Tk()
 
@@ -63,18 +63,16 @@ def change_team(window):
 def print_scores(window, team_1, team_2, round):
     score_team_1 = tk.Label(window,
                             text=f"Score de l'équipe {team_1.get_name()} : {team_1.get_score()}",
-                            anchor=tk.CENTER,
                             font=('calibri', 20, 'bold'),)
     score_team_2 = tk.Label(window,
                             text=f"Score de l'équipe {team_2.get_name()} : {team_2.get_score()}",
-                            anchor=tk.CENTER,
                             font=('calibri', 20, 'bold'))
     
     mutex : Mutex = Mutex()
     mutex.take()
     b = tk.Button(window, text='Manche suivante' if round < 3 else 'Fin', command=mutex.put)
-    score_team_1.pack()
-    score_team_2.pack()
+    score_team_1.pack(anchor=tk.CENTER)
+    score_team_2.pack(anchor=tk.CENTER)
     b.pack()
     refreshUntilMutex(mutex)
     score_team_1.pack_forget()
