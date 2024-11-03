@@ -26,7 +26,7 @@ class Team:
         except EndOfWords:
             pass
 
-    def __init_gui__(self, window):
+    def __init_gui__(self):
         self.pass_button = tk.Button(cfg.window,
                                      height=50,
                                      width=50,
@@ -46,7 +46,7 @@ class Team:
                                           text=f'Mot validé ce tour : {self.score_round}',
                                           font=('calibri', 30, 'bold'))
 
-    def __init__(self, name : str, window, playerA : str= 'Alice', playerB : str= 'Bob'):
+    def __init__(self, name : str, playerA : str= 'Alice', playerB : str= 'Bob'):
         self.name : str = name
         self.playerA : str = playerA
         self.playerB : str = playerB
@@ -56,9 +56,9 @@ class Team:
         # Initialization of the team's score and timer
         self.score = 0
         self.score_round = 0
-        self.ctr : Timer = Timer(window)
+        self.ctr : Timer = Timer(cfg.window)
         # GUI
-        self.__init_gui__(window)
+        self.__init_gui__()
 
     def draw(self):
         self.ctr.draw()
