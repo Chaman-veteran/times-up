@@ -11,7 +11,6 @@ from words import Words, EndOfWords
 import config as cfg
 
 from lib.counter import DEFAULT_DURATION, Timer
-from lib.mutex import Mutex
 
 class Team:
     def __word_pass__(self):
@@ -28,24 +27,22 @@ class Team:
             pass
 
     def __init_gui__(self, window):
-        self.window = window
-
-        self.pass_button = tk.Button(self.window,
+        self.pass_button = tk.Button(cfg.window,
                                      height=50,
                                      width=50,
                                      background='red',
                                      activebackground='red',
                                      text='Passer',
                                      command=lambda: self.__word_pass__())
-        self.validate_button = tk.Button(self.window,
+        self.validate_button = tk.Button(cfg.window,
                                          height=50,
                                          width=50,
                                          background='green',
                                          activebackground='green',
                                          text='Valider',
                                          command=lambda: self.__word_validate__())
-        self.to_guess = tk.Label(self.window, font=('calibri', 30, 'bold'))
-        self.validated_counter = tk.Label(self.window,
+        self.to_guess = tk.Label(cfg.window, font=('calibri', 30, 'bold'))
+        self.validated_counter = tk.Label(cfg.window,
                                           text=f'Mot validé ce tour : {self.score_round}',
                                           font=('calibri', 30, 'bold'))
 
@@ -85,27 +82,19 @@ class Team:
 
     def get_name(self):
         return self.name
+    
+    def get_spy(self):
+        return self.spy
+
+    def get_guesser(self):
+        return self.guesser
 
     def pick_word_to_guess(self):
         word_to_guess : str = self.words.pick_word()
         self.to_guess.config(text=f'Le mot à deviner est : {word_to_guess}')
-    
-    def print_guesser(self):
-        label = tk.Label(self.window,
-                         text=f"{self.name}, c'est à {self.spy} de faire deviner à {self.guesser}, {self.spy} t'es prêt ?!")
-        mutex : Mutex = Mutex()
-        mutex.take()
-        b = tk.Button(self.window ,text="Prêt ?", command=mutex.put, height=7, width=20)
-        label.pack()
-        b.pack()
-        while mutex.get_value() == 0:
-            self.window.update()
-        label.pack_forget()
-        b.pack_forget()
 
     def play_turn(self):
         """A team playing his allocated time for the current turn."""
-        self.print_guesser()
         self.ctr.start()
         self.draw()
 
@@ -114,7 +103,7 @@ class Team:
         self.pick_word_to_guess()
         while self.ctr.get_remaining_time() > 0 and self.words.nb_remaining_words() > 0:
             self.ctr.update()
-            self.window.update()
+            cfg.window.update()
 
         self.clear()
 
@@ -138,7 +127,7 @@ class Team:
         round_end.pack(anchor=tk.CENTER)
         scored.pack(anchor=tk.CENTER)
 
-        self.window.update_idletasks()
+        cfg.window.update_idletasks()
         sleep(4)
 
         round_end.pack_forget()
