@@ -10,7 +10,7 @@ from time import sleep
 from words import Words, EndOfWords
 import config as cfg
 
-from lib.counter import Timer
+from lib.counter import DEFAULT_DURATION, Timer
 from lib.mutex import Mutex
 
 class Team:
@@ -119,7 +119,7 @@ class Team:
         self.clear()
 
         label_round_end = ''
-        saved_ctr = 0
+        saved_ctr = DEFAULT_DURATION
         if self.ctr.get_remaining_time() == 0:
             label_round_end = 'Time Out!'
             self.__word_pass__()
