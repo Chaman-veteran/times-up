@@ -98,8 +98,6 @@ class Team:
         self.ctr.start()
         self.draw()
 
-        self.score_round = 0
-
         self.pick_word_to_guess()
         while self.ctr.get_remaining_time() > 0 and self.words.nb_remaining_words() > 0:
             self.ctr.update()
@@ -135,3 +133,4 @@ class Team:
 
         self.ctr.reset(saved_ctr)
         self.spy, self.guesser = self.guesser, self.spy
+        self.score_round = 0
