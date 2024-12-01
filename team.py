@@ -134,3 +134,5 @@ class Team:
         self.ctr.reset(saved_ctr)
         self.spy, self.guesser = self.guesser, self.spy
         self.score_round = 0
+        self.validated_counter.config(text=f'Mots validés ce tour : {self.score_round}')
+

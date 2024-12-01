@@ -18,7 +18,7 @@ def refreshUntilMutex(mutex):
 
 def init_window():
     cfg.window.title("Times Up")
-    cfg.window.geometry('1200x700')
+    cfg.window.geometry('1200x800')
 
 def fill_team_infos():
     l_name = tk.Label(cfg.window, text="Nom d'équipe : ", height=5, width=50)
