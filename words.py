@@ -11,7 +11,7 @@ class EndOfWords(Exception):
 
 class Words:
     def __init__(self, dictionary_path: str):
-        with open(dictionary_path) as f:
+        with open(dictionary_path, 'r') as f:
             words = list({line.strip('\n') for line in f.readlines()})
 
         self.list_of_words = sample(words, k=NB_WORDS_TO_GUESS)
